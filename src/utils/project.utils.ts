@@ -1,4 +1,4 @@
-import { Point, Pane } from '../types';
+import { Pane, Point } from '../types';
 
 export const paneProjector = (pane: Pane) => {
     return (p: Point) => project(p, pane);

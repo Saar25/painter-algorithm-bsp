@@ -1,8 +1,8 @@
-import { renderCube } from './utils';
+import { Matrix4, PerspectiveCamera } from 'three';
+import { initCameraListeners, updateCamera } from './camera';
 import './style.css';
 import { Entity } from './types';
-import { Matrix4, PerspectiveCamera, Vector3 } from 'three';
-import { initCameraListeners, updateCamera } from './camera';
+import { renderCube } from './utils';
 
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;

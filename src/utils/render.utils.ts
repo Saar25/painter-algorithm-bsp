@@ -1,5 +1,5 @@
 import { PerspectiveCamera } from 'three';
-import { cubeVertices, cubeFaces, cubeFaceColors } from '../constants';
+import { cubeFaceColors, cubeFaces, cubeVertices } from '../constants';
 import { EntityOf } from '../types';
 
 export const renderCube = (
