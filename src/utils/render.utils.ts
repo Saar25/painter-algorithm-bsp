@@ -1,42 +1,42 @@
-import { Camera } from 'three';
+import { PerspectiveCamera } from 'three';
 import { cubeVertices, cubeFaces, cubeFaceColors } from '../constants';
 import { EntityOf } from '../types';
-import { rotateX, rotateY, project } from '../utils';
 
 export const renderCube = (
     canvas: HTMLCanvasElement,
     ctx: CanvasRenderingContext2D,
-    camera: Camera,
+    camera: PerspectiveCamera,
     entity: EntityOf<'cube'>,
 ) => {
+    const viewMatrix = camera.matrixWorldInverse;
     const transformed = cubeVertices.map(v => {
         const worldPoint = v.clone().applyMatrix4(entity.transform);
+        const cameraSpace = worldPoint.clone().applyMatrix4(viewMatrix);
+        const isBehindCamera = cameraSpace.z > -camera.near;
+        const p = worldPoint.clone().project(camera);
 
-        // Step 2: Project to screen (NDC) using camera
-        const ndcPoint = worldPoint.clone().project(camera); // now in [-1, 1] range
-
-        // Step 3: Convert NDC to screen pixels
-        return ndcPoint;
+        return { p, isBehindCamera };
     });
 
-    // Create face objects with projected points and average Z
-    const faceData = cubeFaces.map((face, i) => {
-        const poly3D = face.map(idx => transformed[idx]);
+    const faceData = cubeFaces.flatMap((face, i) => {
+        // If any point is behind camera — skip face
+        if (face.some(idx => transformed[idx].isBehindCamera)) {
+            return [];
+        }
 
-        const projected = poly3D.map(p => {
+        const projected = face.map(idx => {
+            const { p } = transformed[idx];
             const x = ((p.x + 1) / 2) * canvas.width;
             const y = ((1 - p.y) / 2) * canvas.height;
             return { x, y };
         });
 
-        const avgZ = poly3D.reduce((sum, p) => sum + p.z, 0) / poly3D.length;
-        return { projected, color: cubeFaceColors[i], z: avgZ } as const;
+        return [{ projected, color: cubeFaceColors[i] }] as const;
     });
 
     // Sort faces back to front
     // faceData.sort((a, b) => b.z - a.z);
 
-    // Draw each face
     for (const face of faceData) {
         ctx.beginPath();
         face.projected.forEach((p, i) => {
