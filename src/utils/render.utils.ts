@@ -1,13 +1,24 @@
 import { PerspectiveCamera } from 'three';
 import { cubeFaceColors, cubeFaces, cubeVertices } from '../constants';
-import { EntityOf } from '../types';
+import { Entity, EntityOf, EntityType } from '../types';
 
-export const renderCube = (
-    canvas: HTMLCanvasElement,
-    ctx: CanvasRenderingContext2D,
-    camera: PerspectiveCamera,
-    entity: EntityOf<'cube'>,
-) => {
+export interface RenderContext {
+    canvas: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
+    camera: PerspectiveCamera;
+}
+
+const renderDictionary = {
+    cube: renderCube,
+} as const satisfies {
+    [P in EntityType]: (context: RenderContext, entity: EntityOf<P>) => void;
+};
+
+export const renderEntity = (context: RenderContext, entity: Entity) => {
+    renderDictionary[entity.type](context, entity);
+};
+
+function renderCube({ canvas, ctx, camera }: RenderContext, entity: EntityOf<'cube'>) {
     const viewMatrix = camera.matrixWorldInverse;
     const transformed = cubeVertices.map(v => {
         const worldPoint = v.clone().applyMatrix4(entity.transform);
@@ -49,4 +60,4 @@ export const renderCube = (
         ctx.strokeStyle = '#000';
         ctx.stroke();
     }
-};
+}

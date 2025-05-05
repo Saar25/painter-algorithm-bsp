@@ -1,8 +1,8 @@
-import { Matrix } from 'mathjs';
+import { Matrix4 } from 'three';
 
 type CubeEntity = {
     type: 'cube';
-    transform: Matrix;
+    transform: Matrix4;
 };
 
 export type Entity = CubeEntity;

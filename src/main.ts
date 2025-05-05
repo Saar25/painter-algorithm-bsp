@@ -2,17 +2,12 @@ import { Matrix4, PerspectiveCamera } from 'three';
 import { initCameraListeners, updateCamera } from './camera';
 import './style.css';
 import { Entity } from './types';
-import { renderCube } from './utils';
+import { RenderContext, renderEntity } from './utils';
 
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
 
-const camera = new PerspectiveCamera(
-    80,
-    canvas.width / canvas.height,
-    0.1,
-    1000,
-);
+const camera = new PerspectiveCamera(80, canvas.width / canvas.height, 0.1, 1000);
 camera.position.set(0, 0, -10);
 camera.lookAt(0, 0, 0);
 
@@ -31,9 +26,8 @@ function draw() {
     const current = performance.now();
     updateCamera(camera, current - lastUpdate);
 
-    entities.forEach(entity => {
-        renderCube(canvas, ctx, camera, entity);
-    });
+    const renderContext = { canvas, ctx, camera } satisfies RenderContext;
+    entities.forEach(entity => renderEntity(renderContext, entity));
 
     lastUpdate = current;
     requestAnimationFrame(draw);

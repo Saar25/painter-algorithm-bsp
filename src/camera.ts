@@ -49,15 +49,9 @@ export const initCameraListeners = (canvas: HTMLCanvasElement) => {
 };
 
 export const updateCamera = (camera: PerspectiveCamera, deltaTime: number) => {
-    const direction = new Vector3(
-        Math.cos(pitch) * Math.sin(yaw),
-        Math.sin(pitch),
-        Math.cos(pitch) * Math.cos(yaw),
-    );
+    const direction = new Vector3(Math.cos(pitch) * Math.sin(yaw), Math.sin(pitch), Math.cos(pitch) * Math.cos(yaw));
 
-    const right = new Vector3()
-        .crossVectors(direction, new Vector3(0, 1, 0))
-        .normalize();
+    const right = new Vector3().crossVectors(direction, new Vector3(0, 1, 0)).normalize();
     const forward = new Vector3().copy(direction).setY(0).normalize();
 
     const speed = 0.005 * deltaTime;
