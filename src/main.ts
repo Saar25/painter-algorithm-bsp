@@ -1,4 +1,4 @@
-import { Matrix4, PerspectiveCamera } from 'three';
+import { Matrix4, PerspectiveCamera, Vector3 } from 'three';
 import { initCameraListeners, updateCamera } from './camera';
 import './style.css';
 import { Entity } from './types';
@@ -17,6 +17,11 @@ const entities = [
     { type: 'cube', transform: new Matrix4().makeTranslation(2, 0, 0) },
     { type: 'cube', transform: new Matrix4().makeTranslation(-2, 0, 0) },
     { type: 'cube', transform: new Matrix4().makeTranslation(0, 2, 0) },
+    {
+        type: 'triangle',
+        transform: new Matrix4().makeTranslation(0, 2, 3),
+        vertices: [new Vector3(-1, -1, 0), new Vector3(1, -1, 0), new Vector3(0, 1, 0)],
+    },
 ] as const satisfies Entity[];
 
 let lastUpdate = performance.now();
