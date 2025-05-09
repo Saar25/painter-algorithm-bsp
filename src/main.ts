@@ -2,7 +2,7 @@ import { Matrix4, PerspectiveCamera, Vector3 } from 'three';
 import { initCameraListeners, updateCamera } from './camera';
 import './style.css';
 import { Entity } from './types';
-import { RenderContext, renderEntity } from './utils';
+import { loadObjFile, RenderContext, renderEntity } from './utils';
 
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
@@ -22,11 +22,11 @@ const entities = [
         transform: new Matrix4().makeTranslation(0, 2, 3),
         vertices: [new Vector3(-1, -1, 0), new Vector3(1, -1, 0), new Vector3(0, 1, 0)],
     },
-] as const satisfies Entity[];
+] satisfies Entity[];
 
 let lastUpdate = performance.now();
 
-function draw() {
+const draw = (): void => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const current = performance.now();
     updateCamera(camera, current - lastUpdate);
@@ -36,6 +36,12 @@ function draw() {
 
     lastUpdate = current;
     requestAnimationFrame(draw);
-}
+};
 
-draw();
+const main = async () => {
+    const objEntities = await loadObjFile('/suzanne.obj');
+    entities.push(...objEntities);
+
+    draw();
+};
+main();
