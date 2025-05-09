@@ -1,6 +1,7 @@
 import { BufferGeometry, Matrix4, Mesh, Vector3 } from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { EntityOf } from '../types';
+import { randomColor } from './color.utils';
 
 const loader = new OBJLoader();
 
@@ -50,6 +51,7 @@ export const loadObjFile = (url: string) => {
                         type: 'triangle',
                         transform,
                         vertices: [a, b, c],
+                        color: randomColor(),
                     })),
                 );
             },

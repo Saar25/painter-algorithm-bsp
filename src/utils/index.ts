@@ -1,3 +1,4 @@
+export * from './color.utils';
 export * from './obj.utils';
 export * from './project.utils';
 export * from './render.utils';
