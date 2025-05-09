@@ -4,6 +4,8 @@ import './style.css';
 import { Entity } from './types';
 import { loadObjFile, RenderContext, renderEntity } from './utils';
 
+const fpsElement = document.getElementById('fps') as HTMLSpanElement;
+const frameElement = document.getElementById('frame') as HTMLSpanElement;
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
 
@@ -24,17 +26,26 @@ const entities = [
     },
 ] satisfies Entity[];
 
-let lastUpdate = performance.now();
+let frameTime = 0;
+let lastFrame = performance.now();
 
 const draw = (): void => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     const current = performance.now();
-    updateCamera(camera, current - lastUpdate);
+    const delta = current - lastFrame;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    updateCamera(camera, delta);
 
     const renderContext = { canvas, ctx, camera } satisfies RenderContext;
     entities.forEach(entity => renderEntity(renderContext, entity));
 
-    lastUpdate = current;
+    const alpha = 0.05; // smoothing factor
+    frameTime = alpha * delta + (1 - alpha) * frameTime;
+    const fps = 1000 / frameTime;
+
+    frameElement.textContent = `Frame: ${frameTime.toFixed(2)}`;
+    fpsElement.textContent = `Fps: ${fps.toFixed(2)}`;
+
+    lastFrame = current;
     requestAnimationFrame(draw);
 };
 
@@ -42,6 +53,7 @@ const main = async () => {
     const objEntities = await loadObjFile('/suzanne.obj');
     entities.push(...objEntities);
 
+    lastFrame = performance.now();
     draw();
 };
 main();
