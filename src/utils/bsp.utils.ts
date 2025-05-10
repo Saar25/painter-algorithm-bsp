@@ -2,6 +2,9 @@ import { BSPNode, EntityOf } from '../types';
 import { classifyPosition, classifyTriangle, splitTriangle } from './math.utils';
 import { RenderContext, renderEntity } from './render.utils';
 
+/**
+ * implementation of the 3D-BSP algorithm
+ */
 export const buildBSP = (triangles: readonly EntityOf<'triangle'>[]): BSPNode | undefined => {
     if (triangles.length === 0) return undefined;
 
@@ -30,18 +33,21 @@ export const buildBSP = (triangles: readonly EntityOf<'triangle'>[]): BSPNode | 
     return { plane, triangles: coplanar, front: buildBSP(front), back: buildBSP(back) };
 };
 
-export function renderBSP(ctx: RenderContext, bspTree: BSPNode) {
-    const relative = classifyPosition(ctx.camera.position, bspTree.plane);
-    if (relative == 'front') {
-        bspTree.back && renderBSP(ctx, bspTree.back);
-        bspTree.triangles.forEach(t => renderEntity(ctx, t));
-        bspTree.front && renderBSP(ctx, bspTree.front);
-    } else if (relative == 'back') {
-        bspTree.front && renderBSP(ctx, bspTree.front);
-        bspTree.triangles.forEach(t => renderEntity(ctx, t));
-        bspTree.back && renderBSP(ctx, bspTree.back);
+/**
+ * implementation of the Painter algorithm
+ */
+export function renderBSP(ctx: RenderContext, bspNode: BSPNode) {
+    const cameraSide = classifyPosition(ctx.camera.position, bspNode.plane);
+    if (cameraSide == 'front') {
+        bspNode.back && renderBSP(ctx, bspNode.back);
+        bspNode.triangles.forEach(t => renderEntity(ctx, t));
+        bspNode.front && renderBSP(ctx, bspNode.front);
+    } else if (cameraSide == 'back') {
+        bspNode.front && renderBSP(ctx, bspNode.front);
+        bspNode.triangles.forEach(t => renderEntity(ctx, t));
+        bspNode.back && renderBSP(ctx, bspNode.back);
     } else {
-        bspTree.back && renderBSP(ctx, bspTree.back);
-        bspTree.front && renderBSP(ctx, bspTree.front);
+        bspNode.back && renderBSP(ctx, bspNode.back);
+        bspNode.front && renderBSP(ctx, bspNode.front);
     }
 }
