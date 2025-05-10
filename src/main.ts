@@ -3,8 +3,8 @@ import { initCameraListeners, updateCamera } from './camera';
 import { gameLoop } from './game-loop';
 import { scenes } from './scene';
 import './style.css';
-import { BSPNode } from './types';
-import { buildBSP, renderBSP, RenderContext } from './utils';
+import { BSPNode, EntityOf } from './types';
+import { buildBSP, renderBSP, RenderContext, renderEntity } from './utils';
 
 const fpsElement = document.getElementById('fps') as HTMLSpanElement;
 const frameElement = document.getElementById('frame') as HTMLSpanElement;
@@ -15,6 +15,7 @@ const camera = new PerspectiveCamera(80, canvas.width / canvas.height, 0.1, 1000
 camera.position.set(0, 0, -1);
 camera.lookAt(0, 0, 0);
 
+let triangles: readonly EntityOf<'triangle'>[] | undefined = undefined;
 let bspTree: BSPNode | undefined = undefined;
 
 let frameTime = 0;
@@ -34,6 +35,7 @@ const draw = (delta: number) => {
 
     const renderContext = { canvas, ctx, camera } satisfies RenderContext;
     bspTree && renderBSP(renderContext, bspTree);
+    // triangles?.forEach(t => renderEntity(renderContext, t));
 };
 
 const frame = (delta: number) => {
@@ -42,17 +44,32 @@ const frame = (delta: number) => {
 };
 
 const printBSPTree = (tree: BSPNode | undefined): void => {
-    const bspToColors = (node: BSPNode | undefined): any => node && {
-                color: node.plane?.color,
-                front: bspToColors(node.front),
-                back: bspToColors(node.back),
-            }
+    const bspToColors = (node: BSPNode | undefined): any =>
+        node && {
+            color: node.plane?.color,
+            front: bspToColors(node.front),
+            back: bspToColors(node.back),
+        };
     console.log(JSON.stringify(bspToColors(tree), null, 4));
 };
 
+function shuffled<T>(array: readonly T[]): T[] {
+    let currentIndex = array.length;
+    const shuffled = [...array];
+
+    while (currentIndex != 0) {
+        let randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        [shuffled[currentIndex], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[currentIndex]];
+    }
+
+    return shuffled;
+}
+
 const main = async () => {
-    const entities = await scenes.random(20);
-    bspTree = buildBSP(entities);
+    triangles = shuffled(await scenes.random(40));
+    bspTree = buildBSP(triangles);
 
     printBSPTree(bspTree);
 

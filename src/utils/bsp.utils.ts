@@ -21,11 +21,7 @@ export const buildBSP = (entities: readonly EntityOf<'triangle'>[]): BSPNode | u
         }
     }
 
-    return {
-        plane,
-        front: buildBSP(front),
-        back: buildBSP(back),
-    };
+    return { plane, front: buildBSP(front), back: buildBSP(back) };
 };
 
 export function renderBSP(ctx: RenderContext, bspTree: BSPNode) {
