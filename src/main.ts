@@ -1,11 +1,11 @@
 import { PerspectiveCamera } from 'three';
 import { initCameraListeners, updateCamera } from './camera';
+import { config } from './config';
 import { gameLoop } from './game-loop';
 import { scenes } from './scene';
 import './style.css';
 import { BSPNode, EntityOf } from './types';
 import { buildBSP, renderBSP, RenderContext } from './utils';
-import { config } from './config';
 
 const fpsElement = document.getElementById('fps') as HTMLSpanElement;
 const frameElement = document.getElementById('frame') as HTMLSpanElement;
