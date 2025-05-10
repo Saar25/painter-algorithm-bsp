@@ -1,5 +1,6 @@
 import { PerspectiveCamera } from 'three';
 import { initCameraListeners, updateCamera } from './camera';
+import { gameLoop } from './game-loop';
 import { scenes } from './scene';
 import './style.css';
 import { BSPNode } from './types';
@@ -14,50 +15,48 @@ const camera = new PerspectiveCamera(80, canvas.width / canvas.height, 0.1, 1000
 camera.position.set(0, 0, -1);
 camera.lookAt(0, 0, 0);
 
-initCameraListeners(canvas);
-
 let bspTree: BSPNode | undefined = undefined;
 
 let frameTime = 0;
-let lastFrame = performance.now();
 
-const draw = (): void => {
-    const current = performance.now();
-    const delta = current - lastFrame;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    updateCamera(camera, delta);
-
-    const renderContext = { canvas, ctx, camera } satisfies RenderContext;
-    bspTree && renderBSP(renderContext, bspTree);
-
+const updateMetadataDisplay = (delta: number) => {
     const alpha = 0.05; // smoothing factor
     frameTime = alpha * delta + (1 - alpha) * frameTime;
     const fps = 1000 / frameTime;
 
     frameElement.textContent = `Frame: ${frameTime.toFixed(2)}`;
     fpsElement.textContent = `Fps: ${fps.toFixed(2)}`;
-
-    lastFrame = current;
-    requestAnimationFrame(draw);
 };
 
-const bspToColors = (node: BSPNode | undefined): any => {
-    return (
-        node && {
-            color: node.plane?.color,
-            front: bspToColors(node.front),
-            back: bspToColors(node.back),
-        }
-    );
+const draw = (delta: number) => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    updateCamera(camera, delta);
+
+    const renderContext = { canvas, ctx, camera } satisfies RenderContext;
+    bspTree && renderBSP(renderContext, bspTree);
+};
+
+const frame = (delta: number) => {
+    draw(delta);
+    updateMetadataDisplay(delta);
+};
+
+const printBSPTree = (tree: BSPNode | undefined): void => {
+    const bspToColors = (node: BSPNode | undefined): any => node && {
+                color: node.plane?.color,
+                front: bspToColors(node.front),
+                back: bspToColors(node.back),
+            }
+    console.log(JSON.stringify(bspToColors(tree), null, 4));
 };
 
 const main = async () => {
-    const entities = await scenes.suzanne();
+    const entities = await scenes.random(20);
     bspTree = buildBSP(entities);
 
-    console.log(bspToColors(bspTree));
+    printBSPTree(bspTree);
 
-    lastFrame = performance.now();
-    draw();
+    initCameraListeners(canvas);
+    gameLoop(frame);
 };
 main();
