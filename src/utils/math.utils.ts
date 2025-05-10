@@ -32,7 +32,7 @@ export function classifyTriangle(
 
 export function classifyPosition(vector: Vector3, plane: EntityOf<'triangle'>, epsilon = 1e-5) {
     const { normal, d } = getPlaneFromTriangle(plane);
-  
+
     const dist = normal.dot(vector) + d;
     if (dist > epsilon) return 'front';
     if (dist < -epsilon) return 'back';

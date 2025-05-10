@@ -2,7 +2,7 @@ import { BSPNode, EntityOf } from '../types';
 import { classifyPosition, classifyTriangle } from './math.utils';
 import { RenderContext, renderEntity } from './render.utils';
 
-export const buildBSP = (entities: EntityOf<'triangle'>[]): BSPNode | undefined => {
+export const buildBSP = (entities: readonly EntityOf<'triangle'>[]): BSPNode | undefined => {
     if (entities.length === 0) return undefined;
 
     const [plane, ...rest] = entities;
