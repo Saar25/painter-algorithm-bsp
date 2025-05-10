@@ -1,4 +1,4 @@
-import { Vector3 } from 'three';
+import { Matrix4, Vector3 } from 'three';
 import { EntityOf } from '../types';
 
 export function getPlaneFromTriangle(entity: EntityOf<'triangle'>): { normal: Vector3; d: number } {
@@ -37,4 +37,61 @@ export function classifyPosition(vector: Vector3, plane: EntityOf<'triangle'>, e
     if (dist > epsilon) return 'front';
     if (dist < -epsilon) return 'back';
     return 'coplanar';
+}
+
+function lerpVector(a: Vector3, b: Vector3, t: number): Vector3 {
+    return a.clone().lerp(b, t);
+}
+
+export function splitTriangle(
+    triangle: EntityOf<'triangle'>,
+    planeEntity: EntityOf<'triangle'>,
+    epsilon = 1e-5,
+): { front: EntityOf<'triangle'>[]; back: EntityOf<'triangle'>[] } {
+    const { normal, d } = getPlaneFromTriangle(planeEntity);
+    const verts = triangle.vertices.map(v => v.clone().applyMatrix4(triangle.transform));
+
+    const distances = verts.map(v => normal.dot(v) + d);
+    const sides = distances.map(dist => (dist > epsilon ? 'front' : dist < -epsilon ? 'back' : 'coplanar'));
+
+    const frontVerts: Vector3[] = [];
+    const backVerts: Vector3[] = [];
+
+    for (let i = 0; i < 3; i++) {
+        const j = (i + 1) % 3;
+        const vi = verts[i];
+        const vj = verts[j];
+        const si = sides[i];
+        const sj = sides[j];
+        const di = distances[i];
+        const dj = distances[j];
+
+        if (si !== 'back') frontVerts.push(vi.clone());
+        if (si !== 'front') backVerts.push(vi.clone());
+
+        if ((si === 'front' && sj === 'back') || (si === 'back' && sj === 'front')) {
+            const t = di / (di - dj);
+            const intersect = lerpVector(vi, vj, t);
+            frontVerts.push(intersect.clone());
+            backVerts.push(intersect.clone());
+        }
+    }
+
+    const toTriangles = (verts: Vector3[]): EntityOf<'triangle'>[] => {
+        const result: EntityOf<'triangle'>[] = [];
+        for (let i = 1; i < verts.length - 1; i++) {
+            result.push({
+                type: 'triangle',
+                transform: new Matrix4(), // already in world space
+                vertices: [verts[0], verts[i], verts[i + 1]],
+                color: triangle.color,
+            });
+        }
+        return result;
+    };
+
+    return {
+        front: toTriangles(frontVerts),
+        back: toTriangles(backVerts),
+    };
 }

@@ -1,4 +1,5 @@
 import { Matrix4, Vector3 } from 'three';
+import { config } from './config';
 import { EntityOf } from './types';
 import { loadObjFile, randomColor } from './utils';
 
@@ -39,12 +40,45 @@ export const simpleScene = (() => [
     },
 ]) satisfies Scene;
 
+export const crossScene = (() => [
+    {
+        type: 'triangle',
+        transform: new Matrix4().makeTranslation(0, 2, 3),
+        vertices: [new Vector3(-1, -1, -1), new Vector3(1, -1, 1), new Vector3(1, -1, -1)],
+        color: '#ff0000',
+    },
+    {
+        type: 'triangle',
+        transform: new Matrix4().makeTranslation(0, 2, 3),
+        vertices: [new Vector3(-1, -1, -1), new Vector3(1, -1, 1), new Vector3(-1, 1, -1)],
+        color: '#ffff00',
+    },
+    {
+        type: 'triangle',
+        transform: new Matrix4().makeTranslation(0, 2, 3),
+        vertices: [new Vector3(1, -1, -1), new Vector3(-1, -1, 1), new Vector3(1, 1, -1)],
+        color: '#00ff00',
+    },
+    {
+        type: 'triangle',
+        transform: new Matrix4().makeTranslation(0, 2, 1),
+        vertices: [new Vector3(1, -1, -1), new Vector3(1, -1, 1), new Vector3(1, 1, -1)],
+        color: '#ff00ff',
+    },
+    {
+        type: 'triangle',
+        transform: new Matrix4().makeTranslation(0, 2, 1),
+        vertices: [new Vector3(-1, -1, -1), new Vector3(-1, -1, 1), new Vector3(-1, 1, -1)],
+        color: '#0000ff',
+    },
+]) satisfies Scene;
+
 export const suzanneScene = (async () => await loadObjFile('/suzanne.obj')) satisfies Scene;
 
-export const randomScene = ((n: number) =>
-    Array.from({ length: n }, () => ({
+export const randomScene = (({ count, size }: { count: number; size: number } = config.random) =>
+    Array.from({ length: count }, () => ({
         type: 'triangle',
-        transform: new Matrix4().makeTranslation(new Vector3().random().multiplyScalar(4)),
+        transform: new Matrix4().makeTranslation(new Vector3().random().multiplyScalar(size)),
         vertices: [
             new Vector3().random().subScalar(0.5).normalize(),
             new Vector3().random().subScalar(0.5).normalize(),
@@ -57,4 +91,5 @@ export const scenes = {
     simple: simpleScene,
     suzanne: suzanneScene,
     random: randomScene,
+    cross: crossScene,
 } as const satisfies Record<string, Scene>;

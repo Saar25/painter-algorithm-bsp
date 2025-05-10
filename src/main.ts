@@ -4,7 +4,8 @@ import { gameLoop } from './game-loop';
 import { scenes } from './scene';
 import './style.css';
 import { BSPNode, EntityOf } from './types';
-import { buildBSP, renderBSP, RenderContext, renderEntity } from './utils';
+import { buildBSP, renderBSP, RenderContext } from './utils';
+import { config } from './config';
 
 const fpsElement = document.getElementById('fps') as HTMLSpanElement;
 const frameElement = document.getElementById('frame') as HTMLSpanElement;
@@ -68,7 +69,7 @@ function shuffled<T>(array: readonly T[]): T[] {
 }
 
 const main = async () => {
-    triangles = shuffled(await scenes.random(40));
+    triangles = shuffled(await scenes[config.scene]());
     bspTree = buildBSP(triangles);
 
     printBSPTree(bspTree);

@@ -1,4 +1,5 @@
 import { PerspectiveCamera } from 'three';
+import { config } from '../config';
 import { cubeFaceColors, cubeFaces, cubeVertices } from '../constants';
 import { Entity, EntityOf, EntityType } from '../types';
 
@@ -59,7 +60,7 @@ function renderCube({ canvas, ctx, camera }: RenderContext, entity: EntityOf<'cu
         ctx.fillStyle = face.color;
         ctx.fill();
         ctx.strokeStyle = '#000';
-        ctx.stroke();
+        config.stroke && ctx.stroke();
     }
 }
 
@@ -92,5 +93,5 @@ function renderTriangle({ canvas, ctx, camera }: RenderContext, entity: EntityOf
     ctx.fillStyle = entity.color ?? '#ccc';
     ctx.fill();
     ctx.strokeStyle = '#000';
-    ctx.stroke();
+    config.stroke && ctx.stroke();
 }

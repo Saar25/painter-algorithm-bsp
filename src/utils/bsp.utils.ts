@@ -1,5 +1,5 @@
 import { BSPNode, EntityOf } from '../types';
-import { classifyPosition, classifyTriangle } from './math.utils';
+import { classifyPosition, classifyTriangle, getPlaneFromTriangle, splitTriangle } from './math.utils';
 import { RenderContext, renderEntity } from './render.utils';
 
 export const buildBSP = (entities: readonly EntityOf<'triangle'>[]): BSPNode | undefined => {
@@ -15,9 +15,15 @@ export const buildBSP = (entities: readonly EntityOf<'triangle'>[]): BSPNode | u
 
         if (side === 'front') front.push(tri);
         else if (side === 'back') back.push(tri);
-        else {
-            // Optional: Handle splitting coplanar triangles
-            front.push(tri); // or choose where to put it
+        else if (side === 'coplanar') {
+            const { normal: planeNormal } = getPlaneFromTriangle(plane);
+            const { normal: triNormal } = getPlaneFromTriangle(tri);
+            const dot = planeNormal.dot(triNormal);
+            (dot >= 0 ? front : back).push(tri); // same facing = front
+        } else {
+            const { front: f, back: b } = splitTriangle(tri, plane);
+            front.push(...f);
+            back.push(...b);
         }
     }
 
