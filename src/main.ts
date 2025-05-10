@@ -5,7 +5,7 @@ import { gameLoop } from './game-loop';
 import { scenes } from './scene';
 import './style.css';
 import { BSPNode, EntityOf } from './types';
-import { buildBSP, printBSPTree, renderBSP, RenderContext, shuffled } from './utils';
+import { buildBSP, computeBSPTreeSize, printBSPTree, renderBSP, RenderContext, shuffled } from './utils';
 
 const fpsElement = document.getElementById('fps') as HTMLSpanElement;
 const frameElement = document.getElementById('frame') as HTMLSpanElement;
@@ -49,6 +49,8 @@ const main = async () => {
     bspTree = buildBSP(triangles);
 
     printBSPTree(bspTree);
+    const size = computeBSPTreeSize(bspTree);
+    console.log(`Built BSP tree with ${size} triangles`);
 
     initCameraListeners(canvas);
     gameLoop(frame);

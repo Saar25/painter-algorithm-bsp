@@ -52,6 +52,13 @@ export function renderBSP(ctx: RenderContext, bspNode: BSPNode) {
     }
 }
 
+export const computeBSPTreeSize = (bspNode: BSPNode | undefined): number => {
+    if (!bspNode) return 0;
+    const front = computeBSPTreeSize(bspNode.front);
+    const back = computeBSPTreeSize(bspNode.back);
+    return bspNode.triangles.length + front + back;
+};
+
 export const printBSPTree = (bspNode: BSPNode | undefined): void => {
     const bspToColors = (node: BSPNode | undefined): any =>
         node && {
