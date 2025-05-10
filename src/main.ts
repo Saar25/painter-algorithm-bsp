@@ -16,7 +16,7 @@ camera.position.set(0, 0, -1);
 camera.lookAt(0, 0, 0);
 
 let triangles: readonly EntityOf<'triangle'>[] | undefined = undefined;
-let bspTree: BSPNode | undefined = undefined;
+let bspTree: BSPNode<EntityOf<'triangle'>> | undefined = undefined;
 let bspTreeSize: number | undefined = undefined;
 
 let frameTime = 0;

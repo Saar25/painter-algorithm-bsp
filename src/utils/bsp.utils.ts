@@ -1,18 +1,18 @@
-import { BSPNode, EntityOf } from '../types';
+import { BSPNode, EntityOf, Triangle } from '../types';
 import { classifyPosition, classifyTriangle, splitTriangle } from './math.utils';
 import { RenderContext, renderEntity } from './render.utils';
 
 /**
  * implementation of the 3D-BSP algorithm
  */
-export const buildBSP = (triangles: readonly EntityOf<'triangle'>[]): BSPNode | undefined => {
+export const buildBSP = <T extends Triangle>(triangles: readonly T[]): BSPNode<T> | undefined => {
     if (triangles.length === 0) return undefined;
 
     const [plane, ...rest] = triangles;
 
-    const front: EntityOf<'triangle'>[] = [];
-    const back: EntityOf<'triangle'>[] = [];
-    const coplanar: EntityOf<'triangle'>[] = [plane];
+    const front: T[] = [];
+    const back: T[] = [];
+    const coplanar: T[] = [plane];
 
     for (const triangle of rest) {
         const side = classifyTriangle(triangle, plane);
@@ -36,7 +36,7 @@ export const buildBSP = (triangles: readonly EntityOf<'triangle'>[]): BSPNode | 
 /**
  * implementation of the Painter algorithm
  */
-export function renderBSP(ctx: RenderContext, bspNode: BSPNode) {
+export function renderBSP(ctx: RenderContext, bspNode: BSPNode<EntityOf<'triangle'>>) {
     const cameraSide = classifyPosition(ctx.camera.position, bspNode.plane);
     if (cameraSide == 'front') {
         bspNode.back && renderBSP(ctx, bspNode.back);
@@ -52,15 +52,15 @@ export function renderBSP(ctx: RenderContext, bspNode: BSPNode) {
     }
 }
 
-export const computeBSPTreeSize = (bspNode: BSPNode | undefined): number => {
+export const computeBSPTreeSize = (bspNode: BSPNode<EntityOf<'triangle'>> | undefined): number => {
     if (!bspNode) return 0;
     const front = computeBSPTreeSize(bspNode.front);
     const back = computeBSPTreeSize(bspNode.back);
     return bspNode.triangles.length + front + back;
 };
 
-export const printBSPTree = (bspNode: BSPNode | undefined): void => {
-    const bspToColors = (node: BSPNode | undefined): any =>
+export const printBSPTree = (bspNode: BSPNode<EntityOf<'triangle'>> | undefined): void => {
+    const bspToColors = (node: BSPNode<EntityOf<'triangle'>> | undefined): any =>
         node && {
             color: node.plane?.color,
             front: bspToColors(node.front),

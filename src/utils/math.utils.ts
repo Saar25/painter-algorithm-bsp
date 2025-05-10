@@ -1,16 +1,16 @@
 import { Matrix4, Vector3 } from 'three';
-import { EntityOf } from '../types';
+import { Triangle } from '../types';
 
-export function getPlaneFromTriangle(entity: EntityOf<'triangle'>): { normal: Vector3; d: number } {
+export function getPlaneFromTriangle(entity: Triangle): { normal: Vector3; d: number } {
     const [a, b, c] = entity.vertices.map(v => v.clone().applyMatrix4(entity.transform));
     const normal = b.clone().sub(a).cross(c.clone().sub(a)).normalize();
     const d = -normal.dot(a);
     return { normal, d };
 }
 
-export function classifyTriangle(
-    triangle: EntityOf<'triangle'>,
-    plane: EntityOf<'triangle'>,
+export function classifyTriangle<T extends Triangle>(
+    triangle: T,
+    plane: T,
     epsilon = 1e-5,
 ): 'front' | 'back' | 'coplanar' | 'spanning' {
     const { normal, d } = getPlaneFromTriangle(plane);
@@ -30,7 +30,7 @@ export function classifyTriangle(
     return 'coplanar';
 }
 
-export function classifyPosition(vector: Vector3, plane: EntityOf<'triangle'>, epsilon = 1e-5) {
+export function classifyPosition(vector: Vector3, plane: Triangle, epsilon = 1e-5) {
     const { normal, d } = getPlaneFromTriangle(plane);
 
     const dist = normal.dot(vector) + d;
@@ -43,11 +43,11 @@ function lerpVector(a: Vector3, b: Vector3, t: number): Vector3 {
     return a.clone().lerp(b, t);
 }
 
-export function splitTriangle(
-    triangle: EntityOf<'triangle'>,
-    planeEntity: EntityOf<'triangle'>,
+export function splitTriangle<T extends Triangle>(
+    triangle: T,
+    planeEntity: T,
     epsilon = 1e-5,
-): { front: EntityOf<'triangle'>[]; back: EntityOf<'triangle'>[] } {
+): { front: T[]; back: T[] } {
     const { normal, d } = getPlaneFromTriangle(planeEntity);
     const verts = triangle.vertices.map(v => v.clone().applyMatrix4(triangle.transform));
 
@@ -77,14 +77,13 @@ export function splitTriangle(
         }
     }
 
-    const toTriangles = (verts: Vector3[]): EntityOf<'triangle'>[] => {
-        const result: EntityOf<'triangle'>[] = [];
+    const toTriangles = (verts: Vector3[]): T[] => {
+        const result: T[] = [];
         for (let i = 1; i < verts.length - 1; i++) {
             result.push({
-                type: 'triangle',
-                transform: new Matrix4(), // already in world space
+                ...triangle,
+                transform: new Matrix4(),
                 vertices: [verts[0], verts[i], verts[i + 1]],
-                color: triangle.color,
             });
         }
         return result;

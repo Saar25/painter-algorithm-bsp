@@ -1,4 +1,5 @@
-import { Matrix4, Vector3 } from 'three';
+import { Matrix4 } from 'three';
+import { Triangle } from './bsp.types';
 
 type CubeEntity = {
     type: 'cube';
@@ -7,10 +8,8 @@ type CubeEntity = {
 
 type TriangleEntity = {
     type: 'triangle';
-    transform: Matrix4;
-    vertices: [Vector3, Vector3, Vector3];
     color?: string;
-};
+} & Triangle;
 
 export type Entity = CubeEntity | TriangleEntity;
 
