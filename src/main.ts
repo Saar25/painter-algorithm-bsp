@@ -5,7 +5,7 @@ import { gameLoop } from './game-loop';
 import { scenes } from './scene';
 import './style.css';
 import { BSPNode, EntityOf } from './types';
-import { buildBSP, computeBSPTreeSize, printBSPTree, renderBSP, RenderContext, shuffled } from './utils';
+import { buildBSP, computeBSPTreeSize, printBSPTree, renderBSP, RenderContext, renderEntity, shuffled } from './utils';
 
 const metadataElement = document.getElementById('metadata') as HTMLDivElement;
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -51,8 +51,11 @@ const draw = (delta: number) => {
     updateCamera(camera, delta);
 
     const renderContext = { canvas, ctx, camera } satisfies RenderContext;
-    bspTree && renderBSP(renderContext, bspTree);
-    // triangles?.forEach(t => renderEntity(renderContext, t));
+    if (config.useBsp) {
+        bspTree && renderBSP(renderContext, bspTree);
+    } else {
+        triangles?.forEach(t => renderEntity(renderContext, t));
+    }
 };
 
 const frame = (delta: number) => {

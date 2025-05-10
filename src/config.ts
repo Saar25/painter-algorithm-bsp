@@ -1,6 +1,7 @@
 export const config = {
     stroke: true,
-    scene: 'random',
+    scene: 'cross',
+    useBsp: true,
     random: {
         count: 20,
         size: 4,
