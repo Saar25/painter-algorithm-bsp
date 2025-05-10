@@ -5,7 +5,7 @@ import { gameLoop } from './game-loop';
 import { scenes } from './scene';
 import './style.css';
 import { BSPNode, EntityOf } from './types';
-import { buildBSP, renderBSP, RenderContext } from './utils';
+import { buildBSP, printBSPTree, renderBSP, RenderContext, shuffled } from './utils';
 
 const fpsElement = document.getElementById('fps') as HTMLSpanElement;
 const frameElement = document.getElementById('frame') as HTMLSpanElement;
@@ -43,30 +43,6 @@ const frame = (delta: number) => {
     draw(delta);
     updateMetadataDisplay(delta);
 };
-
-const printBSPTree = (tree: BSPNode | undefined): void => {
-    const bspToColors = (node: BSPNode | undefined): any =>
-        node && {
-            color: node.plane?.color,
-            front: bspToColors(node.front),
-            back: bspToColors(node.back),
-        };
-    console.log(JSON.stringify(bspToColors(tree), null, 4));
-};
-
-function shuffled<T>(array: readonly T[]): T[] {
-    let currentIndex = array.length;
-    const shuffled = [...array];
-
-    while (currentIndex != 0) {
-        let randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-
-        [shuffled[currentIndex], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[currentIndex]];
-    }
-
-    return shuffled;
-}
 
 const main = async () => {
     triangles = shuffled(await scenes[config.scene]());

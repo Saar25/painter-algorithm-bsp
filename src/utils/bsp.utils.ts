@@ -51,3 +51,13 @@ export function renderBSP(ctx: RenderContext, bspNode: BSPNode) {
         bspNode.front && renderBSP(ctx, bspNode.front);
     }
 }
+
+export const printBSPTree = (bspNode: BSPNode | undefined): void => {
+    const bspToColors = (node: BSPNode | undefined): any =>
+        node && {
+            color: node.plane?.color,
+            front: bspToColors(node.front),
+            back: bspToColors(node.back),
+        };
+    console.log(JSON.stringify(bspToColors(bspNode), null, 4));
+};

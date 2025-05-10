@@ -1,3 +1,4 @@
+export * from './array.utils';
 export * from './bsp.utils';
 export * from './color.utils';
 export * from './math.utils';
