@@ -7,8 +7,7 @@ import './style.css';
 import { BSPNode, EntityOf } from './types';
 import { buildBSP, computeBSPTreeSize, printBSPTree, renderBSP, RenderContext, shuffled } from './utils';
 
-const fpsElement = document.getElementById('fps') as HTMLSpanElement;
-const frameElement = document.getElementById('frame') as HTMLSpanElement;
+const metadataElement = document.getElementById('metadata') as HTMLDivElement;
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
 
@@ -18,16 +17,33 @@ camera.lookAt(0, 0, 0);
 
 let triangles: readonly EntityOf<'triangle'>[] | undefined = undefined;
 let bspTree: BSPNode | undefined = undefined;
+let bspTreeSize: number | undefined = undefined;
 
 let frameTime = 0;
 
-const updateMetadataDisplay = (delta: number) => {
+const computeFrameTime = (delta: number) => {
     const alpha = 0.05; // smoothing factor
-    frameTime = alpha * delta + (1 - alpha) * frameTime;
+    return (frameTime = alpha * delta + (1 - alpha) * frameTime);
+};
+
+const updateMetadata = (metadata: Record<string, string>) => {
+    metadataElement.innerHTML = '';
+    const children = Object.entries(metadata).map(([key, value]) => {
+        const element = document.createElement('span');
+        element.innerText = `${key}: ${value}`;
+        return element;
+    });
+    metadataElement.replaceChildren(...children);
+};
+const updateMetadataDisplay = (delta: number) => {
+    const frameTime = computeFrameTime(delta);
     const fps = 1000 / frameTime;
 
-    frameElement.textContent = `Frame: ${frameTime.toFixed(2)}`;
-    fpsElement.textContent = `Fps: ${fps.toFixed(2)}`;
+    updateMetadata({
+        Fps: fps.toFixed(2),
+        'Frame Time': frameTime.toFixed(2),
+        Triangles: (bspTreeSize ?? 0).toString(),
+    });
 };
 
 const draw = (delta: number) => {
@@ -47,10 +63,9 @@ const frame = (delta: number) => {
 const main = async () => {
     triangles = shuffled(await scenes[config.scene]());
     bspTree = buildBSP(triangles);
+    bspTreeSize = computeBSPTreeSize(bspTree);
 
     printBSPTree(bspTree);
-    const size = computeBSPTreeSize(bspTree);
-    console.log(`Built BSP tree with ${size} triangles`);
 
     initCameraListeners(canvas);
     gameLoop(frame);
