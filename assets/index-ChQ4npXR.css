@@ -1,0 +1,1 @@
+body{margin:0;background:#111;height:100vh;display:flex;flex-direction:column;color:#fff}.menu-container{position:absolute;display:flex;flex-direction:column;gap:8px}#metadata{display:flex;flex-direction:column;color:#fff;gap:4px;font-size:20px}.canvas-container{flex-grow:1;display:flex;justify-content:center;align-items:center}canvas{background:#222;border:1px solid #444}
