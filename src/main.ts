@@ -3,10 +3,10 @@ import { initCameraListeners, updateCamera } from './camera';
 import { config } from './config';
 import { gameLoop } from './game-loop';
 import { scenes } from './scene';
+import { SceneType } from './scene.types';
 import './style.css';
 import { BSPNode, EntityOf } from './types';
 import { buildBSP, computeBSPTreeSize, printBSPTree, renderBSP, RenderContext, renderEntity, shuffled } from './utils';
-import { SceneType } from './scene.types';
 
 const metadataElement = document.getElementById('metadata') as HTMLDivElement;
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -65,11 +65,21 @@ const frame = (delta: number) => {
     updateMetadataDisplay(delta);
 };
 
-const main = async () => {
-    scene = await scenes[config.scene as SceneType]();
-    triangles = shuffled(scene);
+declare global {
+  interface Window {
+    rebuildScene: () => void;
+  }
+}
+
+const rebuildScene = window.rebuildScene = () => {
+    triangles = shuffled(scene!);
     bspTree = buildBSP(triangles);
     bspTreeSize = computeBSPTreeSize(bspTree);
+};
+
+const main = async () => {
+    scene = await scenes[config.scene as SceneType]();
+    rebuildScene();
 
     printBSPTree(bspTree);
 
