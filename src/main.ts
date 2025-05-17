@@ -72,16 +72,17 @@ declare global {
 }
 
 const rebuildScene = window.rebuildScene = () => {
+    console.clear();
     triangles = shuffled(scene!);
     bspTree = buildBSP(triangles);
     bspTreeSize = computeBSPTreeSize(bspTree);
+
+    printBSPTree(bspTree);
 };
 
 const main = async () => {
     scene = await scenes[config.scene as SceneType]();
     rebuildScene();
-
-    printBSPTree(bspTree);
 
     initCameraListeners(canvas);
     gameLoop(frame);
