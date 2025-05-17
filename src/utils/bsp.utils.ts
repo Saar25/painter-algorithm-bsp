@@ -1,5 +1,5 @@
 import { BSPNode, EntityOf, Triangle } from '../types';
-import { chooseBestSplitter, classifyPosition, classifyTriangle, splitTriangle } from './math.utils';
+import { classifyPosition, classifyTriangle, splitTriangle } from './math.utils';
 import { RenderContext, renderEntity } from './render.utils';
 
 /**
