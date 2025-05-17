@@ -66,19 +66,19 @@ const frame = (delta: number) => {
 };
 
 declare global {
-  interface Window {
-    rebuildScene: () => void;
-  }
+    interface Window {
+        rebuildScene: () => void;
+    }
 }
 
-const rebuildScene = window.rebuildScene = () => {
+const rebuildScene = (window.rebuildScene = () => {
     console.clear();
     triangles = shuffled(scene!);
     bspTree = buildBSP(triangles);
     bspTreeSize = computeBSPTreeSize(bspTree);
 
     printBSPTree(bspTree);
-};
+});
 
 const main = async () => {
     scene = await scenes[config.scene as SceneType]();

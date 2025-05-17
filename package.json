@@ -1,12 +1,13 @@
 {
-    "name": "try3d",
+    "name": "painter-algorithm-bsp",
     "private": true,
     "version": "0.0.0",
     "type": "module",
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "prettier": "npx prettier . -w"
     },
     "devDependencies": {
         "@types/three": "^0.176.0",
