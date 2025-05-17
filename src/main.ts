@@ -6,6 +6,7 @@ import { scenes } from './scene';
 import './style.css';
 import { BSPNode, EntityOf } from './types';
 import { buildBSP, computeBSPTreeSize, printBSPTree, renderBSP, RenderContext, renderEntity, shuffled } from './utils';
+import { SceneType } from './scene.types';
 
 const metadataElement = document.getElementById('metadata') as HTMLDivElement;
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -15,6 +16,7 @@ const camera = new PerspectiveCamera(80, canvas.width / canvas.height, 0.1, 1000
 camera.position.set(0, 0, -1);
 camera.lookAt(0, 0, 0);
 
+let scene: readonly EntityOf<'triangle'>[] | undefined = undefined;
 let triangles: readonly EntityOf<'triangle'>[] | undefined = undefined;
 let bspTree: BSPNode<EntityOf<'triangle'>> | undefined = undefined;
 let bspTreeSize: number | undefined = undefined;
@@ -64,7 +66,8 @@ const frame = (delta: number) => {
 };
 
 const main = async () => {
-    triangles = shuffled(await scenes[config.scene]());
+    scene = await scenes[config.scene as SceneType]();
+    triangles = shuffled(scene);
     bspTree = buildBSP(triangles);
     bspTreeSize = computeBSPTreeSize(bspTree);
 

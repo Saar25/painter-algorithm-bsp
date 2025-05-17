@@ -1,5 +1,6 @@
 import { Matrix4, Vector3 } from 'three';
 import { config } from './config';
+import { SceneType } from './scene.types';
 import { EntityOf } from './types';
 import { loadObjFile, randomColor } from './utils';
 
@@ -75,8 +76,8 @@ export const crossScene = (() => [
 
 export const suzanneScene = (async () => await loadObjFile('/suzanne.obj')) satisfies Scene;
 
-export const randomScene = (({ count, size }: { count: number; size: number } = config.random) =>
-    Array.from({ length: count }, () => ({
+export const randomScene = (({ count, size }: { count: number; size: number } = config.random) => {
+    return Array.from({ length: count }, () => ({
         type: 'triangle',
         transform: new Matrix4().makeTranslation(new Vector3().random().multiplyScalar(size)),
         vertices: [
@@ -85,11 +86,12 @@ export const randomScene = (({ count, size }: { count: number; size: number } = 
             new Vector3().random().subScalar(0.5).normalize(),
         ],
         color: randomColor(),
-    }))) satisfies Scene;
+    }));
+}) satisfies Scene;
 
 export const scenes = {
     simple: simpleScene,
     suzanne: suzanneScene,
     random: randomScene,
     cross: crossScene,
-} as const satisfies Record<string, Scene>;
+} as const satisfies Record<SceneType, Scene>;

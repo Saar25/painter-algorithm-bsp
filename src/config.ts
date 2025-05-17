@@ -1,9 +1,11 @@
+import { SceneType } from './scene.types';
+
 export const config = {
     stroke: true,
-    scene: 'cross',
+    scene: 'random',
     useBsp: true,
     random: {
         count: 20,
         size: 4,
     },
-} as const;
+} as const satisfies any & { scene: SceneType };
