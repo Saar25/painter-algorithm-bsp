@@ -94,3 +94,36 @@ export function splitTriangle<T extends Triangle>(
         back: toTriangles(backVerts),
     };
 }
+
+export function chooseBestSplitter<T extends Triangle>(triangles: readonly T[]): T {
+    let bestTriangle = triangles[0];
+    let bestScore = Infinity;
+
+    for (const candidate of triangles) {
+        let splits = 0;
+        let frontCount = 0;
+        let backCount = 0;
+
+        for (const triangle of triangles) {
+            const side = classifyTriangle(triangle, candidate);
+
+            if (side === 'front') {
+                frontCount++;
+            } else if (side === 'back') {
+                backCount++;
+            } else if (side === 'spanning') {
+                splits++;
+            }
+        }
+
+        const balance = Math.abs(frontCount - backCount);
+        const score = splits * 3 + balance; // Weighted cost function
+
+        if (score < bestScore) {
+            bestScore = score;
+            bestTriangle = candidate;
+        }
+    }
+
+    return bestTriangle;
+}

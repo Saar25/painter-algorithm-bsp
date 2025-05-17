@@ -1,11 +1,11 @@
 import { SceneType } from './scene.types';
 
 export const config = {
-    stroke: false,
-    scene: 'simple',
+    stroke: true,
+    scene: 'random',
     useBsp: true,
     random: {
-        count: 20,
-        size: 4,
+        count: 50,
+        size: 10,
     },
 } as const satisfies Record<string, any> & { scene: SceneType };

@@ -1,5 +1,5 @@
 import { BSPNode, EntityOf, Triangle } from '../types';
-import { classifyPosition, classifyTriangle, splitTriangle } from './math.utils';
+import { chooseBestSplitter, classifyPosition, classifyTriangle, splitTriangle } from './math.utils';
 import { RenderContext, renderEntity } from './render.utils';
 
 /**
@@ -9,6 +9,8 @@ export const buildBSP = <T extends Triangle>(triangles: readonly T[]): BSPNode<T
     if (triangles.length === 0) return undefined;
 
     const [plane, ...rest] = triangles;
+    // const plane = chooseBestSplitter(triangles);
+    // const rest = triangles.filter(t => t !== plane);
 
     const front: T[] = [];
     const back: T[] = [];
