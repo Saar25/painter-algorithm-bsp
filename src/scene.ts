@@ -74,7 +74,10 @@ export const crossScene = (() => [
     },
 ]) satisfies Scene;
 
-export const suzanneScene = (async () => await loadObjFile('/suzanne.obj')) satisfies Scene;
+export const suzanneScene = (async () => {
+    const url = new URL('/suzanne.obj', import.meta.url).href
+    return await loadObjFile(url);
+}) satisfies Scene;
 
 export const randomScene = (() => {
     const size = config.random.size;
