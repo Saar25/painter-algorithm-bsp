@@ -9,6 +9,12 @@
     <body>
         <div class="menu-container">
             <div id="metadata"></div>
+            <select name="object" id="scene-type-select" onchange="onSceneTypeChange()">
+                <option value="simple">simple</option>
+                <option value="suzanne">suzanne</option>
+                <option value="random">random</option>
+                <option value="cross">cross</option>
+            </select>
             <button id="shuffle-btn" onclick="rebuildScene()">Shuffle</button>
         </div>
         <div class="canvas-container">

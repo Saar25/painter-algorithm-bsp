@@ -9,6 +9,7 @@ import { BSPNode, EntityOf } from './types';
 import { buildBSP, computeBSPTreeSize, printBSPTree, renderBSP, RenderContext, renderEntity, shuffled } from './utils';
 
 const metadataElement = document.getElementById('metadata') as HTMLDivElement;
+const sceneTypeSelectElement = document.getElementById("scene-type-select") as HTMLSelectElement;
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
 
@@ -68,6 +69,7 @@ const frame = (delta: number) => {
 declare global {
     interface Window {
         rebuildScene: () => void;
+        onSceneTypeChange: () => void;
     }
 }
 
@@ -80,9 +82,14 @@ const rebuildScene = (window.rebuildScene = () => {
     printBSPTree(bspTree);
 });
 
-const main = async () => {
-    scene = await scenes[config.scene as SceneType]();
+const onSceneTypeChange = (window.onSceneTypeChange = async () => {
+    const sceneType = sceneTypeSelectElement.value as SceneType;
+    scene = await scenes[sceneType]();
     rebuildScene();
+})
+
+const main = async () => {
+    onSceneTypeChange();
 
     initCameraListeners(canvas);
     gameLoop(frame);
