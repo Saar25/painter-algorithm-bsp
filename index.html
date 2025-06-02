@@ -5,13 +5,21 @@
         <link rel="icon" type="image/svg+xml" href="./vite.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Painter Algorithm</title>
-      <script type="module" crossorigin src="./assets/index-DRSIW8bL.js"></script>
-      <link rel="stylesheet" crossorigin href="./assets/index-ChQ4npXR.css">
+      <script type="module" crossorigin src="./assets/index-C0hjg3Bg.js"></script>
+      <link rel="stylesheet" crossorigin href="./assets/index-BteplgMw.css">
     </head>
     <body>
         <div class="menu-container">
             <div id="metadata"></div>
-            <button id="shuffle-btn" onclick="rebuildScene()">Shuffle</button>
+            <select name="object" id="scene-type-select" onchange="rebuildScene()">
+                <option value="simple">simple</option>
+                <option value="suzanne">suzanne</option>
+                <option value="random">random</option>
+                <option value="cross">cross</option>
+            </select>
+            <input id="triangle-count" type="number" name="triangle-count" value="50" />
+            <button id="shuffle-btn" onclick="shuffleScene()">Shuffle</button>
+            <button id="rebuild-scene-btn" onclick="rebuildScene()">Rebuild</button>
         </div>
         <div class="canvas-container">
             <canvas id="canvas" width="900" height="600"></canvas>
