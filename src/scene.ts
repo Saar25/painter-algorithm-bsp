@@ -75,7 +75,7 @@ export const crossScene = (() => [
 ]) satisfies Scene;
 
 export const suzanneScene = (async () => {
-    const url = new URL('/suzanne.obj', import.meta.url).href
+    const url = new URL('/suzanne.obj', import.meta.url).href;
     return await loadObjFile(url);
 }) satisfies Scene;
 

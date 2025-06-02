@@ -1,5 +1,4 @@
 import { PerspectiveCamera } from 'three';
-import { config } from '../config';
 import { cubeFaceColors, cubeFaces, cubeVertices } from '../constants';
 import { Entity, EntityOf, EntityType } from '../types';
 
@@ -7,6 +6,7 @@ export interface RenderContext {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
     camera: PerspectiveCamera;
+    stroke: boolean;
 }
 
 const renderDictionary = {
@@ -20,7 +20,7 @@ export const renderEntity = (context: RenderContext, entity: Entity) => {
     renderDictionary[entity.type](context, entity as any);
 };
 
-function renderCube({ canvas, ctx, camera }: RenderContext, entity: EntityOf<'cube'>) {
+function renderCube({ canvas, ctx, camera, stroke }: RenderContext, entity: EntityOf<'cube'>) {
     const viewMatrix = camera.matrixWorldInverse;
     const transformed = cubeVertices.map(v => {
         const worldPoint = v.clone().applyMatrix4(entity.transform);
@@ -60,11 +60,11 @@ function renderCube({ canvas, ctx, camera }: RenderContext, entity: EntityOf<'cu
         ctx.fillStyle = face.color;
         ctx.fill();
         ctx.strokeStyle = '#000';
-        config.stroke && ctx.stroke();
+        stroke && ctx.stroke();
     }
 }
 
-function renderTriangle({ canvas, ctx, camera }: RenderContext, entity: EntityOf<'triangle'>) {
+function renderTriangle({ canvas, ctx, camera, stroke }: RenderContext, entity: EntityOf<'triangle'>) {
     const viewMatrix = camera.matrixWorldInverse;
 
     const transformed = entity.vertices.map(v => {
@@ -93,5 +93,5 @@ function renderTriangle({ canvas, ctx, camera }: RenderContext, entity: EntityOf
     ctx.fillStyle = entity.color ?? '#ccc';
     ctx.fill();
     ctx.strokeStyle = '#000';
-    config.stroke && ctx.stroke();
+    stroke && ctx.stroke();
 }

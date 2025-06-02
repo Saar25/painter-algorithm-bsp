@@ -1,5 +1,4 @@
 export const config = {
-    stroke: true,
     useBsp: true,
     random: {
         size: 10,
