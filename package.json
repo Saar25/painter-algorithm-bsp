@@ -2,6 +2,12 @@
     "name": "painter-algorithm-bsp",
     "private": true,
     "version": "0.0.0",
+"repository": {
+  "type": "git",
+  "url": "https://github.com/Saar25/painter-algorithm-bsp"
+},
+"author": "Saar T",
+"license": "MIT"
     "type": "module",
     "scripts": {
         "dev": "vite",
