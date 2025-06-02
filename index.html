@@ -9,13 +9,15 @@
     <body>
         <div class="menu-container">
             <div id="metadata"></div>
-            <select name="object" id="scene-type-select" onchange="onSceneTypeChange()">
+            <select name="object" id="scene-type-select" onchange="rebuildScene()">
                 <option value="simple">simple</option>
                 <option value="suzanne">suzanne</option>
                 <option value="random">random</option>
                 <option value="cross">cross</option>
             </select>
-            <button id="shuffle-btn" onclick="rebuildScene()">Shuffle</button>
+            <input id="triangle-count" type="number" name="triangle-count" value="50" />
+            <button id="shuffle-btn" onclick="shuffleScene()">Shuffle</button>
+            <button id="rebuild-scene-btn" onclick="rebuildScene()">Rebuild</button>
         </div>
         <div class="canvas-container">
             <canvas id="canvas" width="900" height="600"></canvas>

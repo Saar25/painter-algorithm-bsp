@@ -22,6 +22,14 @@ body {
     font-size: 20px;
 }
 
+#triangle-count {
+    display: none;
+}
+
+select#scene-type-select:has(option[value='random']:checked) ~ #triangle-count {
+    display: unset;
+}
+
 .canvas-container {
     flex-grow: 1;
     display: flex;

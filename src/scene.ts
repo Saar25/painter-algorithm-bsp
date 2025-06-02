@@ -76,7 +76,11 @@ export const crossScene = (() => [
 
 export const suzanneScene = (async () => await loadObjFile('/suzanne.obj')) satisfies Scene;
 
-export const randomScene = (({ count, size }: { count: number; size: number } = config.random) => {
+export const randomScene = (() => {
+    const size = config.random.size;
+    const triangleCountElement = document.getElementById('triangle-count') as HTMLInputElement;
+    const count = +triangleCountElement.value;
+
     return Array.from({ length: count }, () => ({
         type: 'triangle',
         transform: new Matrix4().makeTranslation(new Vector3().random().multiplyScalar(size)),

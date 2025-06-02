@@ -9,7 +9,7 @@ import { BSPNode, EntityOf } from './types';
 import { buildBSP, computeBSPTreeSize, printBSPTree, renderBSP, RenderContext, renderEntity, shuffled } from './utils';
 
 const metadataElement = document.getElementById('metadata') as HTMLDivElement;
-const sceneTypeSelectElement = document.getElementById("scene-type-select") as HTMLSelectElement;
+const sceneTypeSelectElement = document.getElementById('scene-type-select') as HTMLSelectElement;
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
 
@@ -68,12 +68,12 @@ const frame = (delta: number) => {
 
 declare global {
     interface Window {
+        shuffleScene: () => void;
         rebuildScene: () => void;
-        onSceneTypeChange: () => void;
     }
 }
 
-const rebuildScene = (window.rebuildScene = () => {
+const shuffleScene = (window.shuffleScene = () => {
     console.clear();
     triangles = shuffled(scene!);
     bspTree = buildBSP(triangles);
@@ -82,14 +82,14 @@ const rebuildScene = (window.rebuildScene = () => {
     printBSPTree(bspTree);
 });
 
-const onSceneTypeChange = (window.onSceneTypeChange = async () => {
+const rebuildScene = (window.rebuildScene = async () => {
     const sceneType = sceneTypeSelectElement.value as SceneType;
     scene = await scenes[sceneType]();
-    rebuildScene();
-})
+    shuffleScene();
+});
 
 const main = async () => {
-    onSceneTypeChange();
+    rebuildScene();
 
     initCameraListeners(canvas);
     gameLoop(frame);
