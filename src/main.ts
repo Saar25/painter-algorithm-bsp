@@ -1,6 +1,5 @@
 import { PerspectiveCamera } from 'three';
 import { initCameraListeners, updateCamera } from './camera';
-import { config } from './config';
 import { gameLoop } from './game-loop';
 import { scenes } from './scene';
 import { SceneType } from './scene.types';
@@ -11,6 +10,7 @@ import { buildBSP, computeBSPTreeSize, printBSPTree, renderBSP, RenderContext, r
 const metadataElement = document.getElementById('metadata') as HTMLDivElement;
 const sceneTypeSelectElement = document.getElementById('scene-type-select') as HTMLSelectElement;
 const strokeCheckboxElement = document.getElementById('stroke-checkbox') as HTMLInputElement;
+const bspCheckboxElement = document.getElementById('bsp-checkbox') as HTMLInputElement;
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
 
@@ -54,9 +54,10 @@ const draw = (delta: number) => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     updateCamera(camera, delta);
     const stroke = strokeCheckboxElement.checked;
+    const useBsp = bspCheckboxElement.checked;
 
     const renderContext = { canvas, ctx, camera, stroke } satisfies RenderContext;
-    if (config.useBsp) {
+    if (useBsp) {
         bspTree && renderBSP(renderContext, bspTree);
     } else {
         triangles?.forEach(t => renderEntity(renderContext, t));

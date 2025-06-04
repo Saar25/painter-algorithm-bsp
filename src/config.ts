@@ -1,5 +1,4 @@
 export const config = {
-    useBsp: true,
     random: {
         size: 10,
     },
